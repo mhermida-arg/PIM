@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIM Argentrade - Ficha de Producto</title>
+    <style>
+        /* (Mismos estilos que ya teníamos) */
+        :root {
+            --primary: #0f172a; --accent: #2563eb; --accent-bg: #eff6ff;
+            --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0;
+            --text: #0f172a; --text-muted: #64748b; --success: #16a34a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+        header { background-color: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .logo { font-size: 1.25rem; font-weight: bold; text-decoration: none; color: white; }
+        .search-box { display: flex; gap: 0.5rem; width: 100%; max-width: 350px; }
+        .search-box input { width: 100%; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border); outline: none; }
+        .container { max-width: 1250px; margin: 1.5rem auto 2rem auto; padding: 0 1rem; }
+        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; font-weight: 500; }
+        .breadcrumb a:hover { color: var(--accent); text-decoration: underline; }
+        .breadcrumb-current { font-weight: bold; color: var(--text); }
+        .product-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
+        @media (max-width: 900px) { .product-grid { grid-template-columns: 1fr; } }
+        .sidebar-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; height: fit-content; }
+        .main-img { width: 100%; height: 280px; object-fit: contain; background: #fff; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; }
+        .meta-group { display: flex; flex-direction: column; gap: 0.4rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .badge { display: inline-block; background: var(--accent-bg); color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; width: fit-content; border: 1px solid var(--accent); text-decoration: none; }
+        .sku-tag { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .variants-section { border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+        .variants-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 0.5rem; }
+        .variant-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .variant-chip { background: #f1f5f9; border: 1px solid var(--border); padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+        .variant-chip:hover { border-color: var(--accent); background: #e2e8f0; }
+        .variant-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,0.2); }
+        .btn-action { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.875rem; transition: background 0.2s; }
+        .btn-ftp { background: #0284c7; color: white; } .btn-ftp:hover { background: #0369a1; }
+        .btn-web { background: #f1f5f9; color: var(--text); border: 1px solid var(--border); } .btn-web:hover { background: #e2e8f0; }
+        .btn-stock { background: #16a34a; color: white; } .btn-stock:hover { background: #15803d; }
+        .main-content { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; }
+        .product-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; }
+        .tabs { display: flex; border-bottom: 2px solid var(--border); gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; }
+        .tab-btn { background: none; border: none; padding: 0.75rem; font-size: 0.875rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; }
+        .tab-btn.active, .tab-btn:hover { color: var(--accent); border-bottom-color: var(--accent); }
+        .tab-panel { display: none; } .tab-panel.active { display: block; }
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .spec-item { background: #f8fafc; padding: 0.85rem; border-radius: 6px; border: 1px solid var(--border); }
+        .spec-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 0.25rem; }
+        .spec-value { font-size: 0.95rem; font-weight: 600; }
+        .copy-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
+        .copy-title { font-size: 0.85rem; font-weight: bold; color: var(--accent); margin-bottom: 0.5rem; text-transform: uppercase; }
+        .copy-text { font-size: 0.9rem; line-height: 1.5; white-space: pre-line; color: #334155; }
+        .resource-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .resource-item { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; text-decoration: none; color: var(--text); }
+        .resource-item:hover { border-color: var(--accent); }
+        .resource-tag { font-size: 0.75rem; background: #e2e8f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header id="mainHeader">
+        <a href="home.html" class="logo">Argentrade PIM</a>
+        <form action="catalogo.html" method="GET" class="search-box">
+            <input type="text" name="q" placeholder="Buscar por SKU o Nombre...">
+        </form>
+    </header>
+
+    <div class="container" id="appContainer">
+        <h3 style="text-align: center; color: #64748b; padding: 3rem;">Cargando ficha del producto... ⏳</h3>
+    </div>
+
+    <!-- PLANTILLA OCULTA QUE SE LLENARÁ CON JS -->
+    <template id="productoTemplate">
+        <nav class="breadcrumb">
+            <a href="home.html">Inicio</a> / 
+            <a href="catalogo.html">Catálogo</a> / 
+            <a href="#" id="bcMarca">Marca</a> / 
+            <span class="breadcrumb-current" id="bcActual">Cargando...</span>
+        </nav>
+
+        <div class="product-grid">
+            <!-- Columna Izquierda -->
+            <div class="sidebar-card">
+                <img id="mainProductImg" src="" alt="Producto" class="main-img">
+                
+                <div class="meta-group">
+                    <a href="#" class="badge" id="uiMarcaBadge">Marca</a>
+                    <span class="sku-tag">SKU Padre: <strong id="uiSkuPadre">...</strong></span>
+                    <span class="sku-tag">Variante: <strong id="uiSkuVariante">Seleccioná un color</strong></span>
+                    <span class="sku-tag" style="color: var(--success); font-weight: bold;" id="uiEstado">Activo</span>
+                </div>
+
+                <div class="variants-section">
+                    <div class="variants-title">Variantes de Color:</div>
+                    <div class="variant-chips" id="uiVariantesContainer">
+                        <!-- Las variantes se cargan por JS -->
+                    </div>
+                </div>
+
+                <a id="btnFtp" href="#" target="_blank" class="btn-action btn-ftp">📁 Carpeta FTP Completa</a>
+                <a id="btnWeb" href="#" target="_blank" class="btn-action btn-web">🔗 Web Oficial</a>
+                <a id="btnStock" href="#" target="_blank" class="btn-action btn-stock">📦 Chequear Stock</a>
+            </div>
+
+            <!-- Columna Derecha -->
+            <div class="main-content">
+                <h1 class="product-title" id="uiNombre">Nombre Comercial</h1>
+
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="openTab(event, 'tab-especificaciones')">Ficha Técnica</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab-comercial')">Textos Comerciales</button>
+                    <button class="tab-btn" onclick="openTab(event, 'tab-multimedia')">Enlaces & Recursos</button>
+                </div>
+
+                <!-- Pestaña 1: Ficha Técnica -->
+                <div id="tab-especificaciones" class="tab-panel active">
+                    <!-- Datos Destacados Universales -->
+                    <div class="specs-grid">
+                        <div class="spec-item"><div class="spec-label">Peso</div><div class="spec-value" id="uiPeso">-</div></div>
+                        <div class="spec-item"><div class="spec-label">Dimensión Armado</div><div class="spec-value" id="uiDimArmado">-</div></div>
+                        <div class="spec-item"><div class="spec-label">Dimensión Bulto</div><div class="spec-value" id="uiDimBulto">-</div></div>
+                        <div class="spec-item"><div class="spec-label">Destacado 1</div><div class="spec-value" id="uiDestacado1">-</div></div>
+                        <div class="spec-item"><div class="spec-label">Destacado 2</div><div class="spec-value" id="uiDestacado2">-</div></div>
+                        <div class="spec-item"><div class="spec-label">Lineal</div><div class="spec-value" id="uiLineal">-</div></div>
+                    </div>
+                    <!-- Ficha Extendida Parseada -->
+                    <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Especificaciones Extendidas</h4>
+                    <div class="specs-grid" id="uiFichaExtendida">
+                        <!-- Se llena con JS separando los Clave:Valor -->
+                    </div>
+                </div>
+
+                <!-- Pestaña 2: Comercial -->
+                <div id="tab-comercial" class="tab-panel">
+                    <div class="copy-box">
+                        <div class="copy-title">Bullet Points (Puntos clave)</div>
+                        <div class="copy-text" id="uiBullets">-</div>
+                    </div>
+                    <div class="copy-box">
+                        <div class="copy-title">Descripción Larga (Web)</div>
+                        <div class="copy-text" id="uiDescLarga">-</div>
+                    </div>
+                </div>
+
+                <!-- Pestaña 3: Multimedia -->
+                <div id="tab-multimedia" class="tab-panel">
+                    <div class="resource-list">
+                        <a href="#" target="_blank" class="resource-item" id="linkFtpRow" style="display:none;">
+                            <span>📷 Fotos Fondo Blanco (Carpeta FTP Oficial)</span><span class="resource-tag">FTP</span>
+                        </a>
+                        <a href="#" target="_blank" class="resource-item" id="linkLifestyleRow" style="display:none;">
+                            <span>🖼️ Fotos Lifestyle / Ambientadas</span><span class="resource-tag">DRIVE</span>
+                        </a>
+                        <a href="#" target="_blank" class="resource-item" id="linkManualRow" style="display:none;">
+                            <span>📄 Manual de Usuario y Garantía en PDF</span><span class="resource-tag">PDF</span>
+                        </a>
+                        <a href="#" target="_blank" class="resource-item" id="linkVideoArmadoRow" style="display:none;">
+                            <span>🎬 Video de Armado / Tutorial</span><span class="resource-tag">YOUTUBE</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // 1. TUS CREDENCIALES DE AIRTABLE (Pegalas de nuevo acá)
+
+        const AIRTABLE_TOKEN = "patsRhUUmBYhyRU6v.fc25941b8835fac901831978042e8ecb21c32a4a2cd68c20eef1ddc42a3478f3"; // Empieza con pat...
+        const AIRTABLE_BASE_ID = "app7o9ehVEoXUVmQo"; // Empieza con app...
+
+
+        const brandConfig = {
+            'Todas': { primary: '#0f172a', accent: '#2563eb' },
+            'Bebesit': { primary: '#ef4444', accent: '#ef4444' },
+            'Randers': { primary: '#991b1b', accent: '#991b1b' },
+            'Adidas': { primary: '#000000', accent: '#000000' },
+            'Jeico': { primary: '#ea580c', accent: '#ea580c' },
+            'Athletic': { primary: '#f97316', accent: '#f97316' }
+        };
+
+        // Extraer el SKU de la URL (ej: producto.html?sku=1390)
+        const urlParams = new URLSearchParams(window.location.search);
+        const skuPadreURL = urlParams.get('sku');
+
+        async function cargarFicha() {
+            if (!skuPadreURL) {
+                document.getElementById('appContainer').innerHTML = "<h2 style='text-align:center; padding:3rem;'>No se especificó un producto en la URL.</h2>";
+                return;
+            }
+
+            // Buscar en la tabla Productos Padre
+            const formula = encodeURIComponent(`{SKU Padre} = '${skuPadreURL}'`);
+            const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Productos%20Padre?filterByFormula=${formula}`;
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}` }});
+                const data = await res.json();
+
+                if (data.records && data.records.length > 0) {
+                    const producto = data.records[0].fields;
+                    renderizarProducto(producto);
+                    
+                    // Si tiene variantes cargadas, las buscamos en la tabla Variantes
+                    const idsVariantes = producto['Variantes'] || [];
+                    if(idsVariantes.length > 0) {
+                        buscarVariantes(idsVariantes);
+                    } else {
+                        document.getElementById('uiVariantesContainer').innerHTML = "<span style='font-size:0.8rem; color:#64748b;'>Producto único (sin variantes de color)</span>";
+                    }
+                } else {
+                    document.getElementById('appContainer').innerHTML = "<h2 style='text-align:center; padding:3rem;'>❌ Producto no encontrado en la Base de Datos.</h2>";
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        function renderizarProducto(campos) {
+            // Instanciar la plantilla HTML
+            const template = document.getElementById('productoTemplate');
+            document.getElementById('appContainer').innerHTML = '';
+            document.getElementById('appContainer').appendChild(template.content.cloneNode(true));
+
+            // Variables clave
+            const nombre = campos['Nombre Comercial'] || 'Sin nombre';
+            const marca = campos['Marca'] || 'Todas';
+            const fotoPortada = campos['Foto Portada URL'] || '';
+
+            // Colorizar el header según la marca
+            if(brandConfig[marca]) {
+                document.documentElement.style.setProperty('--primary', brandConfig[marca].primary);
+                document.documentElement.style.setProperty('--accent', brandConfig[marca].accent);
+            }
+
+            // Llenar Textos Principales
+            document.getElementById('uiNombre').innerText = nombre;
+            document.getElementById('bcActual').innerText = `${nombre} (${skuPadreURL})`;
+            document.getElementById('bcMarca').innerText = marca;
+            document.getElementById('bcMarca').href = `catalogo.html?marca=${marca}`;
+            
+            document.getElementById('uiMarcaBadge').innerText = marca;
+            document.getElementById('uiMarcaBadge').href = `catalogo.html?marca=${marca}`;
+            document.getElementById('uiSkuPadre').innerText = skuPadreURL;
+            document.getElementById('uiEstado').innerText = campos['Estado General'] || 'Activo';
+            
+            if(fotoPortada) document.getElementById('mainProductImg').src = fotoPortada;
+
+            // Datos Destacados
+            document.getElementById('uiPeso').innerText = campos['Peso de producto'] || '-';
+            document.getElementById('uiDimArmado').innerText = campos['Dimension Armado'] || '-';
+            document.getElementById('uiDimBulto').innerText = campos['Dimension Bulto'] || '-';
+            document.getElementById('uiDestacado1').innerText = campos['Atributo Destacado 1'] || '-';
+            document.getElementById('uiDestacado2').innerText = campos['Atributo Destacado 2'] || '-';
+            document.getElementById('uiLineal').innerText = campos['Lineal'] || '-';
+
+            // Textos Comerciales
+            document.getElementById('uiBullets').innerText = campos['Bullet Points'] || 'Sin información comercial cargada.';
+            document.getElementById('uiDescLarga').innerText = campos['Descripcion Larga'] || 'Sin descripción extendida cargada.';
+
+            // Mapeo automático de "Ficha técnica extendida" a Grilla
+            const textoFicha = campos['Ficha tecnica extendida'] || '';
+            const contenedorFicha = document.getElementById('uiFichaExtendida');
+            if (textoFicha) {
+                const lineas = textoFicha.split('\n');
+                let htmlFicha = '';
+                lineas.forEach(linea => {
+                    if(linea.includes(':')) {
+                        const partes = linea.split(':');
+                        htmlFicha += `<div class="spec-item"><div class="spec-label">${partes[0].trim()}</div><div class="spec-value">${partes[1].trim()}</div></div>`;
+                    }
+                });
+                contenedorFicha.innerHTML = htmlFicha;
+            } else {
+                contenedorFicha.innerHTML = '<div style="grid-column: 1/-1; color: #64748b; font-size: 0.9rem;">No hay especificaciones detalladas disponibles.</div>';
+            }
+
+            // Enlaces y Botones
+            configurarLink('btnFtp', campos['Link FTP General']);
+            configurarLink('linkFtpRow', campos['Link FTP General'], true);
+            
+            configurarLink('btnWeb', campos['URL Web Oficial']);
+            
+            configurarLink('linkLifestyleRow', campos['Link Fotos Lifestyle'], true);
+            configurarLink('linkManualRow', campos['Manual de Usuario'], true);
+            configurarLink('linkVideoArmadoRow', campos['Link Videos Armado'], true);
+
+            // Botón de Stock default al padre
+            document.getElementById('btnStock').href = `https://argentrade.net/consultar_stock/?sku=${skuPadreURL}`;
+        }
+
+        function configurarLink(idElemento, url, isRow = false) {
+            const el = document.getElementById(idElemento);
+            if (url) {
+                el.href = url;
+                if(isRow) el.style.display = 'flex';
+            } else {
+                if(!isRow) {
+                    el.style.opacity = '0.5';
+                    el.style.pointerEvents = 'none';
+                    el.innerText = '🚫 No disponible';
+                }
+            }
+        }
+
+        async function buscarVariantes(idsVariantes) {
+            // Airtable permite filtrar por IDs directamente usando RECORD_ID()
+            const formulas = idsVariantes.map(id => `RECORD_ID()='${id}'`);
+            const formulaFinal = encodeURIComponent(`OR(${formulas.join(',')})`);
+            const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Variantes?filterByFormula=${formulaFinal}`;
+
+            try {
+                const res = await fetch(url, { headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}` }});
+                const data = await res.json();
+                
+                const container = document.getElementById('uiVariantesContainer');
+                container.innerHTML = ''; // Limpiar cargando
+
+                data.records.forEach((variante, index) => {
+                    const c = variante.fields;
+                    const skuVar = c['SKU Variante'] || 'N/A';
+                    const colorNom = c['Color / Denominación'] || 'Color';
+                    const colorHex = c['Código Color Hex'] || '#cccccc';
+                    const fotoUrl = c['Foto Principal URL'] || '';
+                    const activaClass = (index === 0) ? 'active' : ''; // Por defecto la primera es activa
+
+                    // Si es la primera, cargamos su foto e info inicial
+                    if(index === 0) {
+                        seleccionarVarianteVisual(skuVar, fotoUrl, this);
+                    }
+
+                    const chip = document.createElement('button');
+                    chip.className = `variant-chip ${activaClass}`;
+                    chip.innerHTML = `<span class="color-dot" style="background: ${colorHex};"></span> ${skuVar} (${colorNom})`;
+                    
+                    // Evento onclick
+                    chip.onclick = function() {
+                        // Desmarcar todas
+                        document.querySelectorAll('.variant-chip').forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        seleccionarVarianteVisual(skuVar, fotoUrl);
+                    };
+
+                    container.appendChild(chip);
+                });
+
+            } catch(e) {
+                console.error("Error cargando variantes", e);
+            }
+        }
+
+        function seleccionarVarianteVisual(skuVar, fotoUrl) {
+            document.getElementById('uiSkuVariante').innerText = skuVar;
+            document.getElementById('btnStock').href = `https://argentrade.net/consultar_stock/?sku=${skuVar}`;
+            document.getElementById('btnStock').innerText = `📦 Chequear Stock de ${skuVar}`;
+            
+            // Cambiar imagen principal si la variante tiene una propia
+            const imgEl = document.getElementById('mainProductImg');
+            if(fotoUrl) {
+                imgEl.src = fotoUrl;
+            }
+        }
+
+        // Lógica de Pestañas
+        function openTab(evt, tabId) {
+            document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Arrancar al cargar
+        window.onload = cargarFicha;
+    </script>
+</body>
+</html>

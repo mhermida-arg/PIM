@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIM Argentrade - Inicio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            800: '#5B5F66',
+                            900: '#141414',
+                            950: '#151517',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+     /* Pattern de puntos base (siempre visibles) */
+        .hero-grid-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+        }
+
+        /* Capa de brillo azul dinámico */
+        .hero-glow-layer {
+            background: radial-gradient(550px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(37, 99, 235, 0.28), transparent 45%);
+        }
+
+        /* Capa de puntos "levantados" (puntos más grandes y brillantes en el radio del mouse) */
+        .hero-dots-active {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.95) 2.5px, transparent 2.5px);
+            background-size: 24px 24px;
+            -webkit-mask-image: radial-gradient(160px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black 0%, transparent 100%);
+            mask-image: radial-gradient(160px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), black 0%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- 1. BARRA SUPERIOR / HEADER -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-8 py-3 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Logo Izquierda -->
+            <a href="home.html" class="flex items-center gap-2.5 group">
+                <div class="w-12 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    PIM
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-slate-900 tracking-tight text-lg leading-tight group-hover:text-brand-600 transition-colors">Argentrade</span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 -mt-0.5">PIM System</span>
+                </div>
+            </a>
+
+            <!-- Tabs / Píldoras Centrales -->
+            <nav class="hidden md:flex items-center p-1 bg-slate-100 rounded-full border border-slate-200/60 text-sm font-medium">
+                <a href="home.html" class="flex items-center gap-2 px-5 py-1.5 rounded-full bg-white text-slate-900 shadow-sm transition-all">
+                    <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 00-1 1m-6 0h6"></path></svg>
+                    <span>Inicio</span>
+                </a>
+                <a href="catalogo.html" class="flex items-center gap-2 px-5 py-1.5 rounded-full text-slate-600 hover:text-slate-900 transition-colors">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span>Productos</span>
+                </a>
+            </nav>
+
+            <!-- Acciones Derecha -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button title="Notificaciones" class="relative p-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-brand-600 rounded-full ring-2 ring-white"></span>
+                </button>
+
+                <a href="#guardados" title="Guardados" class="flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                 
+                </a>
+
+                <div class="h-6 w-[1px] bg-slate-200 mx-1"></div>
+
+                <div class="flex items-center gap-2.5 pl-1 cursor-pointer group">
+                    <div class="w-9 h-9 rounded-full bg-slate-900 text-white font-semibold text-xs flex items-center justify-center ring-2 ring-slate-200 group-hover:ring-brand-500 transition-all">
+                        MH
+                    </div>
+                    <div class="hidden lg:flex flex-col text-left">
+                        <span class="text-xs font-bold text-slate-800 leading-snug">Martina H.</span>
+                        <span class="text-[10px] text-slate-500">Administrador</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- 2. HERO SECTION CON ANIMACIÓN DINÁMICA INTERACTIVA -->
+    <section id="hero-section" class="bg-dark-900 text-white py-16 lg:py-20 px-4 relative overflow-hidden group">
+        
+        <!-- Capa 1: Puntos base visibles en TODO el fondo -->
+        <div class="pointer-events-none absolute inset-0 hero-grid-pattern"></div>
+
+        <!-- Capa 2: Brillo Azul que sigue al mouse -->
+        <div class="pointer-events-none absolute inset-0 hero-glow-layer opacity-80 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+        <!-- Capa 3: Puntos más grandes/brillantes que se superponen al pasar el mouse -->
+        <div class="pointer-events-none absolute inset-0 hero-dots-active transition-transform duration-75"></div>
+
+        <div class="max-w-4xl mx-auto text-center relative z-10 pointer-events-auto">
+            
+            <!-- Badge superior -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs font-medium text-slate-300 mb-6 backdrop-blur-sm shadow-inner">
+                <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                <span>Tu fuente única de productos</span>
+            </div>
+
+            <!-- Título Principal -->
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                Encontrá cada detalle del producto, al instante.
+            </h1>
+
+            <!-- Subtítulo -->
+            <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-8 font-normal leading-relaxed">
+                El único lugar confiable para datos de productos, recursos multimedia y material comercial de Argentrade.
+            </p>
+
+            <!-- Buscador Grande Pill/Card -->
+            <form action="catalogo.html" method="GET" class="max-w-2xl mx-auto">
+                <div class="p-2 sm:p-2.5 bg-white rounded-2xl shadow-2xl shadow-black/40 flex items-center gap-2 border border-white/20 transition-all focus-within:ring-4 focus-within:ring-brand-500/30">
+                    <div class="pl-3 text-slate-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="text" name="q" placeholder="Buscar por nombre, SKU, EAN o palabra clave..." class="w-full text-slate-900 text-sm sm:text-base placeholder-slate-400 bg-transparent focus:outline-none py-2 px-1" autofocus>
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 text-sm whitespace-nowrap">
+                        <span>Buscar</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Chips de Búsqueda Rápida -->
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400">
+                <span class="font-medium text-slate-500">Probá buscar:</span>
+                <a href="catalogo.html?q=1390" class="px-3 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-white transition-all">"1390"</a>
+                <a href="catalogo.html?q=Cochecitos" class="px-3 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-white transition-all">"Cochecitos"</a>
+                <a href="catalogo.html?q=Cintas" class="px-3 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-white transition-all">"Cintas de correr"</a>
+                <a href="catalogo.html?q=Bicicletas" class="px-3 py-1 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/50 text-slate-300 hover:text-white transition-all">"Bicicletas"</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 3. SECCIÓN NAVEGACIÓN POR LINEALES -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-12 w-full space-y-16">
+        
+        <section>
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Explorar Categorías</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Navegar por Lineal</h2>
+                </div>
+                <a href="catalogo.html" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline group">
+                    <span>Ver todos los productos</span>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+
+            <!-- Grid de 4 Cards Principales -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Card 1: Bebé -->
+                <a href="catalogo.html?lineal=bebe" class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="h-48 bg-slate-100 relative overflow-hidden flex items-center">
+                        <img src="https://fotos.argentrade.net/Bebesit/1052/1052-F/1052-F_07.jpg" alt="Bebé y Puericultura" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-800 uppercase tracking-wider">Bebesit</span>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white flex-1">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg group-hover:text-brand-600 transition-colors">Bebé</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">142 prod. activos</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-brand-600 text-slate-600 group-hover:text-white flex items-center justify-center transition-all shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 2: Fitness Hogar -->
+                <a href="catalogo.html?lineal=fitness-hogar" class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="h-48 bg-slate-100 relative overflow-hidden flex items-center">
+                        <img src="https://fotos.argentrade.net/Adidas/AVUS-10750/AVUS-10750_04.jpg" alt="Fitness Hogar" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-800 uppercase tracking-wider">Randers / Adidas / Athletic / Jeico</span>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white flex-1">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg group-hover:text-brand-600 transition-colors">Fitness Hogar</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">98 prod. activos</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-brand-600 text-slate-600 group-hover:text-white flex items-center justify-center transition-all shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 3: MMS -->
+                <a href="catalogo.html?lineal=mms" class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="h-48 bg-slate-100 relative overflow-hidden flex items-center">
+                        <img src="https://fotos.argentrade.net/Randers/Movilidad%20Sustentable/BKE-N-FE29-LB/BKE-N-FE29-LB_03.jpg" alt="MMS Movilidad" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-800 uppercase tracking-wider">Randers / Jeico</span>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white flex-1">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg group-hover:text-brand-600 transition-colors">MMS</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">64 prod. activos</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-brand-600 text-slate-600 group-hover:text-white flex items-center justify-center transition-all shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 4: Accesorios Fitness -->
+                <a href="catalogo.html?lineal=accesorios-fitness" class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+                    <div class="h-48 bg-slate-100 relative overflow-hidden flex items-center">
+                        <img src="https://fotos.argentrade.net/Adidas/ADRP-13011-NL/ADRP-13011-NL_07.jpg" alt="Accesorios Fitness" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60"></div>
+                        <span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-[11px] font-bold text-slate-800 uppercase tracking-wider">Randers / Adidas</span>
+                    </div>
+                    <div class="p-5 flex items-center justify-between bg-white flex-1">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg group-hover:text-brand-600 transition-colors">Accesorios Fitness</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">115 prod. activos</p>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-brand-600 text-slate-600 group-hover:text-white flex items-center justify-center transition-all shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- 4. SECCIÓN NOVEDADES Y ÚLTIMOS CAMBIOS -->
+        <section>
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Actualizaciones recientes</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">Últimas novedades y cambios</h2>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-500"></span> 2 Cambios
+                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 ml-2"></span> 2 Novedades
+                </div>
+            </div>
+
+            <!-- Grid de 4 Cards de Productos -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Producto 1 -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200/60">
+                                🔄 CAMBIO
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Bebesit</span>
+                        </div>
+
+                        <div class="w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
+                            <img src="https://fotos.argentrade.net/Bebesit/1390/1390-D/1390-D_01.jpg" alt="Cochecito Aeris" class="max-h-36 max-w-full object-contain mix-blend-multiply" onerror="this.onerror=null; this.src='https://placehold.co/400x400/f1f5f9/0f172a?text=Cochecito+Aeris';">
+                        </div>
+
+                        <div class="text-xs font-semibold text-brand-600 mb-1">SKU: 1390</div>
+                        <h4 class="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-brand-600 transition-colors">
+                            Cochecito de Paseo Aeris con Manillar Reversible
+                        </h4>
+                        <p class="text-[11px] text-slate-500 mb-4 line-clamp-1">Actualizado: Especificaciones técnicas y fotos FTP</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <a href="producto.html" class="w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                            <span>Ver Ficha Completa</span>
+                        </a>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="https://fotos.argentrade.net/Bebesit/1390/" target="_blank" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📁 FTP
+                            </a>
+                            <a href="https://argentrade.net/consultar_stock/?sku=1390" target="_blank" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📦 Stock
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 2 -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200/60">
+                                🔄 CAMBIO
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Randers</span>
+                        </div>
+
+                        <div class="w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
+                            <img src="https://images.unsplash.com/photo-1576678927484-cc909957088c?auto=format&fit=crop&w=400&q=80" alt="Cinta de Correr" class="max-h-36 max-w-full object-contain mix-blend-multiply" onerror="this.onerror=null; this.src='https://placehold.co/400x400/f1f5f9/0f172a?text=Cinta+Randers';">
+                        </div>
+
+                        <div class="text-xs font-semibold text-brand-600 mb-1">SKU: ARG-510</div>
+                        <h4 class="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-brand-600 transition-colors">
+                            Cinta de Correr Motorizada Plegable 2.0 HP
+                        </h4>
+                        <p class="text-[11px] text-slate-500 mb-4 line-clamp-1">Actualizado: Cambio de manual de usuario PDF</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <a href="producto.html" class="w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                            <span>Ver Ficha Completa</span>
+                        </a>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="#" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📁 FTP
+                            </a>
+                            <a href="https://argentrade.net/consultar_stock/?sku=ARG-510" target="_blank" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📦 Stock
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 3 -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200/60">
+                                ✨ NOVEDAD
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Jeico</span>
+                        </div>
+
+                        <div class="w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
+                            <img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=400&q=80" alt="Bicicleta Jeico R29" class="max-h-36 max-w-full object-contain mix-blend-multiply" onerror="this.onerror=null; this.src='https://placehold.co/400x400/f1f5f9/0f172a?text=Bicicleta+Jeico';">
+                        </div>
+
+                        <div class="text-xs font-semibold text-brand-600 mb-1">SKU: B29-JEI</div>
+                        <h4 class="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-brand-600 transition-colors">
+                            Bicicleta Mountain Bike R29 Aluminio 21v
+                        </h4>
+                        <p class="text-[11px] text-slate-500 mb-4 line-clamp-1">Nuevo ingreso: Alta de producto en PIM</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <a href="producto.html" class="w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                            <span>Ver Ficha Completa</span>
+                        </a>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="#" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📁 FTP
+                            </a>
+                            <a href="https://argentrade.net/consultar_stock/?sku=B29-JEI" target="_blank" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📦 Stock
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producto 4 -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200/60">
+                                ✨ NOVEDAD
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Adidas</span>
+                        </div>
+
+                        <div class="w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
+                            <img src="https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=400&q=80" alt="Mancuernas Adidas" class="max-h-36 max-w-full object-contain mix-blend-multiply" onerror="this.onerror=null; this.src='https://placehold.co/400x400/f1f5f9/0f172a?text=Set+Adidas';">
+                        </div>
+
+                        <div class="text-xs font-semibold text-brand-600 mb-1">SKU: ADI-SET10</div>
+                        <h4 class="font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-2 group-hover:text-brand-600 transition-colors">
+                            Set de Mancuernas Ajustables Fitness 10kg
+                        </h4>
+                        <p class="text-[11px] text-slate-500 mb-4 line-clamp-1">Nuevo ingreso: Incorporación a catálogo Adidas</p>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <a href="producto.html" class="w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                            <span>Ver Ficha Completa</span>
+                        </a>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="#" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📁 FTP
+                            </a>
+                            <a href="https://argentrade.net/consultar_stock/?sku=ADI-SET10" target="_blank" class="py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                                📦 Stock
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200/80 mt-16 py-8 px-4 lg:px-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-700">PIM Argentrade</span>
+                <span>• Base Unificada de Productos</span>
+            </div>
+            <p>© 2026 Argentrade S.A. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- SCRIPT DE INTERACCIÓN CON EL MOUSE -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hero = document.getElementById('hero-section');
+            if (hero) {
+                hero.addEventListener('mousemove', (e) => {
+                    const rect = hero.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    hero.style.setProperty('--mouse-x', `${x}px`);
+                    hero.style.setProperty('--mouse-y', `${y}px`);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
