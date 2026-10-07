@@ -4,214 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PIM Argentrade - Catálogo de Productos</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            800: '#5B5F66',
+                            900: '#141414',
+                            950: '#151517',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0f172a;
-            --accent: #2563eb;
-            --accent-bg: #eff6ff;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --border: #e2e8f0;
-            --text: #0f172a;
-            --text-muted: #64748b;
-            --success: #16a34a;
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
-
-        /* Header con animación de color de marca */
-        header { 
-            background-color: var(--primary); 
-            color: white; 
-            padding: 1rem 2rem; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            flex-wrap: wrap; 
-            gap: 1rem; 
-            transition: background-color 0.4s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Pattern de puntos base */
+        .hero-grid-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
         }
-        .logo { font-size: 1.25rem; font-weight: bold; letter-spacing: 0.5px; text-decoration: none; color: white; }
-        
-        /* Filtros Rápidos de Cabecera */
-        .brand-filters { display: flex; align-items: center; gap: 0.5rem; }
-        .filter-btn { 
-            background: rgba(255, 255, 255, 0.2); 
-            color: white; 
-            border: 1px solid rgba(255, 255, 255, 0.3); 
-            padding: 0.5rem 1rem; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 0.875rem; 
-            transition: all 0.2s; 
-        }
-        .filter-btn:hover { background: rgba(255, 255, 255, 0.35); }
-        .filter-btn.active { 
-            background: white; 
-            color: #0f172a; 
-            font-weight: bold; 
-            border-color: white;
-        }
-
-        .dropdown { position: relative; display: inline-block; }
-        .dropdown-btn { display: flex; align-items: center; gap: 0.3rem; }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #1e293b;
-            min-width: 140px;
-            box-shadow: 0px 8px 16px rgba(0,0,0,0.25);
-            border-radius: 6px;
-            margin-top: 4px;
-            z-index: 10;
-            overflow: hidden;
-        }
-        .dropdown-content a { color: white; padding: 0.6rem 1rem; text-decoration: none; display: block; font-size: 0.875rem; transition: background 0.2s; }
-        .dropdown-content a:hover { background-color: var(--accent); }
-        .dropdown:hover .dropdown-content { display: block; }
-
-        /* Contenedor Principal */
-        .container { max-width: 1250px; margin: 2rem auto; padding: 0 1.5rem; }
-
-        /* Barra de Filtros de Catálogo (Múltiples criterios) */
-        .catalog-filter-bar {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem 1.5rem;
-            margin-bottom: 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.25rem;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-
-        .filter-group { display: flex; flex-direction: column; gap: 0.35rem; }
-        .filter-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-        .filter-select, .filter-input {
-            padding: 0.55rem 0.85rem;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.875rem;
-            outline: none;
-            background-color: #ffffff;
-            color: var(--text);
-        }
-        .filter-input { min-width: 260px; }
-        .filter-select:focus, .filter-input:focus { border-color: var(--accent); }
-
-        .filters-left { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
-        .results-count { font-size: 0.875rem; color: var(--text-muted); font-weight: 600; }
-
-        /* Grilla de Resultados de Productos */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-        .product-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .product-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-        }
-        .product-img-wrap {
-            width: 100%;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fff;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
-        }
-        .product-img { max-width: 90%; max-height: 90%; object-fit: contain; }
-        
-        .badges-wrapper { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
-        .card-badge-brand { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 4px; color: white; }
-        .card-badge-lineal { font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 4px; background: #f1f5f9; color: #475569; }
-
-        .product-sku { font-size: 0.8rem; color: var(--text-muted); font-weight: bold; }
-        .product-name { font-size: 0.95rem; font-weight: 700; color: var(--text); margin: 0.2rem 0 1rem 0; line-height: 1.3; }
-
-        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-top: auto; }
-        .card-btn { 
-            padding: 0.5rem; 
-            border-radius: 6px; 
-            font-size: 0.75rem; 
-            font-weight: 600; 
-            text-align: center; 
-            text-decoration: none; 
-            transition: background 0.2s; 
-        }
-        .card-btn-primary { background: var(--accent); color: white; grid-column: span 2; }
-        .card-btn-primary:hover { filter: brightness(0.9); }
-        .card-btn-secondary { background: #f1f5f9; color: var(--text); border: 1px solid var(--border); }
-        .card-btn-secondary:hover { background: #e2e8f0; }
-
-        /* Paginador simple */
-        .pagination { display: flex; justify-content: center; gap: 0.5rem; margin-top: 3rem; }
-        .page-btn { padding: 0.5rem 0.85rem; border-radius: 6px; border: 1px solid var(--border); background: white; cursor: pointer; font-size: 0.875rem; font-weight: 600; }
-        .page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Header con ID para cambio de color dinámico -->
-    <header id="mainHeader">
-        <a href="index.html" class="logo">Argentrade PIM</a>
-        
-        <!-- Filtros Rápidos en Header -->
-        <div class="brand-filters">
-            <button class="filter-btn active" onclick="changeBrand('Todas', this)">Todas</button>
-            <button class="filter-btn" onclick="changeBrand('Randers', this)">Randers</button>
-            <button class="filter-btn" onclick="changeBrand('Bebesit', this)">Bebesit</button>
-            <button class="filter-btn" onclick="changeBrand('Adidas', this)">Adidas</button>
+    <!-- 1. BARRA SUPERIOR / HEADER -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-8 py-3 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             
-            <div class="dropdown">
-                <button id="moreDropdownBtn" class="filter-btn dropdown-btn">Más ▾</button>
-                <div class="dropdown-content">
-                    <a href="#" onclick="changeBrand('Jeico', this)">Jeico</a>
-                    <a href="#" onclick="changeBrand('Athletic', this)">Athletic</a>
+            <!-- Logo Izquierda -->
+            <a href="index.html" class="flex items-center gap-2.5 group">
+                <div class="w-12 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    PIM
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-slate-900 tracking-tight text-lg leading-tight group-hover:text-brand-600 transition-colors">Argentrade</span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 -mt-0.5">PIM System</span>
+                </div>
+            </a>
+
+            <!-- Tabs / Píldoras Centrales -->
+            <nav class="hidden md:flex items-center p-1 bg-slate-100 rounded-full border border-slate-200/60 text-sm font-medium">
+                <a href="index.html" class="flex items-center gap-2 px-5 py-1.5 rounded-full text-slate-600 hover:text-slate-900 transition-colors">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 00-1 1m-6 0h6"></path></svg>
+                    <span>Inicio</span>
+                </a>
+                <a href="catalogo.html" class="flex items-center gap-2 px-5 py-1.5 rounded-full bg-white text-slate-900 shadow-sm transition-all">
+                    <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span>Productos</span>
+                </a>
+            </nav>
+
+            <!-- Acciones Derecha -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button title="Notificaciones" class="relative p-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-brand-600 rounded-full ring-2 ring-white"></span>
+                </button>
+
+                <a href="#guardados" title="Guardados" class="flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                </a>
+
+                <div class="h-6 w-[1px] bg-slate-200 mx-1"></div>
+
+                <div class="flex items-center gap-2.5 pl-1 cursor-pointer group">
+                    <div class="w-9 h-9 rounded-full bg-slate-900 text-white font-semibold text-xs flex items-center justify-center ring-2 ring-slate-200 group-hover:ring-brand-500 transition-all">
+                        MH
+                    </div>
+                    <div class="hidden lg:flex flex-col text-left">
+                        <span class="text-xs font-bold text-slate-800 leading-snug">Martina H.</span>
+                        <span class="text-[10px] text-slate-500">Administrador</span>
+                    </div>
                 </div>
             </div>
+
         </div>
     </header>
 
-    <div class="container">
-        
-        <!-- Encabezado de la Vista -->
-        <div style="margin-bottom: 1.5rem;">
-            <h1 id="pageTitle" style="font-size: 1.75rem; font-weight: 800;">Catálogo General de Productos</h1>
-            <span class="results-count">Mostrando 6 productos encontrados</span>
+    <!-- 2. HERO BANNER DE MARCA -->
+    <section id="catalog-hero" class="bg-dark-900 text-white py-12 px-4 relative overflow-hidden transition-colors duration-500">
+        <div class="pointer-events-none absolute inset-0 hero-grid-pattern opacity-60"></div>
+
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs font-medium text-slate-300 mb-3 backdrop-blur-sm shadow-inner">
+                    <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
+                    <span id="headerBrandBadge">Argentrade PIM</span>
+                </div>
+                <h1 id="pageTitle" class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">Catálogo General de Productos</h1>
+                <p class="text-slate-400 text-xs sm:text-sm mt-1.5 font-medium results-count">Mostrando 6 productos encontrados</p>
+            </div>
+
+            <!-- Filtros Rápidos de Cabecera (Píldoras) -->
+            <div class="brand-filters flex flex-wrap items-center gap-2">
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-white text-slate-900 shadow-sm" onclick="changeBrand('Todas', this)">Todas</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60" onclick="changeBrand('Randers', this)">Randers</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60" onclick="changeBrand('Bebesit', this)">Bebesit</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60" onclick="changeBrand('Adidas', this)">Adidas</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60" onclick="changeBrand('Jeico', this)">Jeico</button>
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60" onclick="changeBrand('Athletic', this)">Athletic</button>
+            </div>
         </div>
+    </section>
+
+    <!-- 3. CONTENIDO PRINCIPAL Y FILTROS -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full flex-1">
 
         <!-- Panel de Filtros Combinables -->
-        <div class="catalog-filter-bar">
-            <div class="filters-left">
+        <div class="catalog-filter-bar bg-white border border-slate-200/80 rounded-2xl p-4 sm:p-5 shadow-sm mb-8 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-4 flex-1">
                 
                 <!-- Buscador de Texto -->
-                <div class="filter-group">
-                    <label class="filter-label">Buscar producto</label>
-                    <input type="text" class="filter-input" placeholder="Tipeá SKU o Nombre de producto...">
+                <div class="flex-1 min-w-[260px]">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Buscar producto</label>
+                    <div class="relative">
+                        <input type="text" class="filter-input w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all" placeholder="Tipeá SKU o Nombre de producto...">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
                 </div>
 
                 <!-- Filtro por Lineal -->
-                <div class="filter-group">
-                    <label class="filter-label">Lineal</label>
-                    <select class="filter-select">
+                <div class="w-full sm:w-auto">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Lineal</label>
+                    <select class="filter-select w-full sm:w-48 py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-slate-700 font-medium">
                         <option value="todos">Todos los Lineales</option>
                         <option value="bebe">Puericultura & Bebé</option>
                         <option value="fitness">Fitness & Equipamiento</option>
@@ -220,9 +160,9 @@
                 </div>
 
                 <!-- Filtro por Estado -->
-                <div class="filter-group">
-                    <label class="filter-label">Estado</label>
-                    <select class="filter-select">
+                <div class="w-full sm:w-auto">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Estado</label>
+                    <select class="filter-select w-full sm:w-48 py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-slate-700 font-medium">
                         <option value="activos">Sólo Activos</option>
                         <option value="todos">Todos (Incluye Discontinuados)</option>
                     </select>
@@ -231,9 +171,9 @@
             </div>
 
             <!-- Ordenamiento -->
-            <div class="filter-group">
-                <label class="filter-label">Ordenar por</label>
-                <select class="filter-select">
+            <div class="w-full lg:w-auto">
+                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">Ordenar por</label>
+                <select class="filter-select w-full sm:w-52 py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all text-slate-700 font-medium">
                     <option value="sku">Número de SKU (Ascendente)</option>
                     <option value="recientes">Últimos Ingresos</option>
                     <option value="nombre">Nombre (A-Z)</option>
@@ -241,144 +181,234 @@
             </div>
         </div>
 
-        <!-- Grilla de Tarjetas de Productos -->
-        <div class="products-grid">
+        <!-- Grilla de Resultados de Productos -->
+        <div class="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             
             <!-- Producto 1: Bebesit Aeris -->
-            <div class="product-card">
+            <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                 <div>
-                    <div class="product-img-wrap">
-                        <img src="https://fotos.argentrade.net/Bebesit/1390/1390-D/1390-D_01.jpg" alt="Cochecito Aeris" class="product-img">
+                    <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                        <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs bg-red-500">Bebesit</span>
+                        <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">Puericultura</span>
                     </div>
-                    <div class="badges-wrapper">
-                        <span class="card-badge-brand" style="background: #ef4444;">Bebesit</span>
-                        <span class="card-badge-lineal">Puericultura</span>
+
+                    <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
+                        <img src="https://fotos.argentrade.net/Bebesit/1390/1390-D/1390-D_01.jpg" alt="Cochecito Aeris" class="product-img max-h-36 max-w-full object-contain mix-blend-multiply">
                     </div>
-                    <div class="product-sku">SKU: 1390</div>
-                    <div class="product-name">Cochecito de Paseo Aeris con Manillar Reversible</div>
+
+                    <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: 1390</div>
+                    <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">
+                        Cochecito de Paseo Aeris con Manillar Reversible
+                    </h4>
                 </div>
-                <div class="card-actions">
-                    <a href="producto.html" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                    <a href="https://fotos.argentrade.net/Bebesit/1390/" target="_blank" class="card-btn card-btn-secondary">📁 FTP</a>
-                    <a href="https://argentrade.net/consultar_stock/?sku=1390" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+
+                <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                    <a href="producto.html" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Ver Ficha Completa</span>
+                    </a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="https://fotos.argentrade.net/Bebesit/1390/" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📁 FTP
+                        </a>
+                        <a href="https://argentrade.net/consultar_stock/?sku=1390" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📦 Stock
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Producto 2: Cuna Bebesit -->
-            <div class="product-card">
+            <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                 <div>
-                    <div class="product-img-wrap">
+                    <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                        <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs bg-red-500">Bebesit</span>
+                        <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">Puericultura</span>
+                    </div>
+
+                    <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
                         <span style="font-size: 3rem;">🛏️</span>
                     </div>
-                    <div class="badges-wrapper">
-                        <span class="card-badge-brand" style="background: #ef4444;">Bebesit</span>
-                        <span class="card-badge-lineal">Puericultura</span>
-                    </div>
-                    <div class="product-sku">SKU: 2006</div>
-                    <div class="product-name">Cuna Colecho Practicuna Regulable en Altura</div>
+
+                    <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: 2006</div>
+                    <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">
+                        Cuna Colecho Practicuna Regulable en Altura
+                    </h4>
                 </div>
-                <div class="card-actions">
-                    <a href="producto.html" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                    <a href="#" class="card-btn card-btn-secondary">📁 FTP</a>
-                    <a href="https://argentrade.net/consultar_stock/?sku=2006" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+
+                <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                    <a href="producto.html" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Ver Ficha Completa</span>
+                    </a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="#" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📁 FTP
+                        </a>
+                        <a href="https://argentrade.net/consultar_stock/?sku=2006" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📦 Stock
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Producto 3: Cinta Randers -->
-            <div class="product-card">
+            <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                 <div>
-                    <div class="product-img-wrap">
+                    <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                        <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs bg-red-800">Randers</span>
+                        <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">Fitness</span>
+                    </div>
+
+                    <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
                         <span style="font-size: 3rem;">🏃</span>
                     </div>
-                    <div class="badges-wrapper">
-                        <span class="card-badge-brand" style="background: #991b1b;">Randers</span>
-                        <span class="card-badge-lineal">Fitness</span>
-                    </div>
-                    <div class="product-sku">SKU: ARG-510</div>
-                    <div class="product-name">Cinta de Correr Motorizada Plegable 2.0 HP</div>
+
+                    <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: ARG-510</div>
+                    <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">
+                        Cinta de Correr Motorizada Plegable 2.0 HP
+                    </h4>
                 </div>
-                <div class="card-actions">
-                    <a href="producto.html" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                    <a href="#" class="card-btn card-btn-secondary">📁 FTP</a>
-                    <a href="https://argentrade.net/consultar_stock/?sku=ARG-510" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+
+                <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                    <a href="producto.html" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Ver Ficha Completa</span>
+                    </a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="#" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📁 FTP
+                        </a>
+                        <a href="https://argentrade.net/consultar_stock/?sku=ARG-510" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📦 Stock
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Producto 4: Bicicleta Fija Randers -->
-            <div class="product-card">
+            <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                 <div>
-                    <div class="product-img-wrap">
+                    <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                        <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs bg-red-800">Randers</span>
+                        <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">Fitness</span>
+                    </div>
+
+                    <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
                         <span style="font-size: 3rem;">🚴‍♂️</span>
                     </div>
-                    <div class="badges-wrapper">
-                        <span class="card-badge-brand" style="background: #991b1b;">Randers</span>
-                        <span class="card-badge-lineal">Fitness</span>
-                    </div>
-                    <div class="product-sku">SKU: ARG-120</div>
-                    <div class="product-name">Bicicleta Fija Magnética con Consola Digital</div>
+
+                    <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: ARG-120</div>
+                    <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">
+                        Bicicleta Fija Magnética con Consola Digital
+                    </h4>
                 </div>
-                <div class="card-actions">
-                    <a href="producto.html" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                    <a href="#" class="card-btn card-btn-secondary">📁 FTP</a>
-                    <a href="https://argentrade.net/consultar_stock/?sku=ARG-120" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+
+                <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                    <a href="producto.html" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Ver Ficha Completa</span>
+                    </a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="#" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📁 FTP
+                        </a>
+                        <a href="https://argentrade.net/consultar_stock/?sku=ARG-120" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📦 Stock
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Producto 5: Bicicleta Jeico -->
-            <div class="product-card">
+            <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                 <div>
-                    <div class="product-img-wrap">
+                    <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                        <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs bg-orange-600">Jeico</span>
+                        <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">MMS</span>
+                    </div>
+
+                    <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
                         <span style="font-size: 3rem;">🚲</span>
                     </div>
-                    <div class="badges-wrapper">
-                        <span class="card-badge-brand" style="background: #ea580c;">Jeico</span>
-                        <span class="card-badge-lineal">MMS</span>
-                    </div>
-                    <div class="product-sku">SKU: B29-JEI</div>
-                    <div class="product-name">Bicicleta Mountain Bike R29 Aluminio 21v</div>
+
+                    <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: B29-JEI</div>
+                    <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">
+                        Bicicleta Mountain Bike R29 Aluminio 21v
+                    </h4>
                 </div>
-                <div class="card-actions">
-                    <a href="producto.html" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                    <a href="#" class="card-btn card-btn-secondary">📁 FTP</a>
-                    <a href="https://argentrade.net/consultar_stock/?sku=B29-JEI" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+
+                <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                    <a href="producto.html" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Ver Ficha Completa</span>
+                    </a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="#" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📁 FTP
+                        </a>
+                        <a href="https://argentrade.net/consultar_stock/?sku=B29-JEI" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📦 Stock
+                        </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Producto 6: Guantes Adidas -->
-            <div class="product-card">
+            <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                 <div>
-                    <div class="product-img-wrap">
+                    <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                        <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs bg-slate-900">Adidas</span>
+                        <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">Fitness</span>
+                    </div>
+
+                    <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
                         <span style="font-size: 3rem;">🥊</span>
                     </div>
-                    <div class="badges-wrapper">
-                        <span class="card-badge-brand" style="background: #000000;">Adidas</span>
-                        <span class="card-badge-lineal">Fitness</span>
-                    </div>
-                    <div class="product-sku">SKU: ADI-BOX-10</div>
-                    <div class="product-name">Guantes de Boxeo Pro Training 10oz</div>
+
+                    <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: ADI-BOX-10</div>
+                    <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">
+                        Guantes de Boxeo Pro Training 10oz
+                    </h4>
                 </div>
-                <div class="card-actions">
-                    <a href="producto.html" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                    <a href="#" class="card-btn card-btn-secondary">📁 FTP</a>
-                    <a href="https://argentrade.net/consultar_stock/?sku=ADI-BOX-10" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+
+                <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                    <a href="producto.html" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                        <span>Ver Ficha Completa</span>
+                    </a>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="#" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📁 FTP
+                        </a>
+                        <a href="https://argentrade.net/consultar_stock/?sku=ADI-BOX-10" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">
+                            📦 Stock
+                        </a>
+                    </div>
                 </div>
             </div>
 
         </div>
 
         <!-- Paginación -->
-        <div class="pagination">
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn">Siguiente →</button>
+        <div class="pagination flex items-center justify-center gap-2 mt-12">
+            <button class="page-btn px-4 py-2 rounded-xl bg-brand-600 text-white font-semibold text-xs shadow-sm transition-all">1</button>
+            <button class="page-btn px-4 py-2 rounded-xl bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-100 font-semibold text-xs transition-all">2</button>
+            <button class="page-btn px-4 py-2 rounded-xl bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-100 font-semibold text-xs transition-all">3</button>
+            <button class="page-btn px-4 py-2 rounded-xl bg-white border border-slate-200/80 text-slate-700 hover:bg-slate-100 font-semibold text-xs transition-all">Siguiente →</button>
         </div>
 
-    </div>
-<script>
-        // 1. TUS CREDENCIALES DE AIRTABLE (Reemplazá esto con tus datos)
-        const AIRTABLE_TOKEN = "patsRhUUmBYhyRU6v.fc25941b8835fac901831978042e8ecb21c32a4a2cd68c20eef1ddc42a3478f3"; // Empieza con pat...
-        const AIRTABLE_BASE_ID = "app7o9ehVEoXUVmQo"; // Empieza con app...
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200/80 mt-16 py-8 px-4 lg:px-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-700">PIM Argentrade</span>
+                <span>• Base Unificada de Productos</span>
+            </div>
+            <p>© 2026 Argentrade S.A. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 1. CREDENCIALES DE AIRTABLE
+        const AIRTABLE_TOKEN = "patsRhUUmBYhyRU6v.fc25941b8835fac901831978042e8ecb21c32a4a2cd68c20eef1ddc42a3478f3";
+        const AIRTABLE_BASE_ID = "app7o9ehVEoXUVmQo";
 
         // Configuración de colores institucionales
         const brandConfig = {
@@ -396,7 +426,7 @@
             const grid = document.querySelector('.products-grid');
             
             // Mostrar estado de carga
-            grid.innerHTML = '<h3 style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 2rem;">Cargando productos desde Airtable... ⏳</h3>';
+            grid.innerHTML = '<h3 class="col-span-full text-center text-slate-500 font-medium py-12">Cargando productos desde Airtable... ⏳</h3>';
 
             try {
                 const respuesta = await fetch(url, {
@@ -409,17 +439,19 @@
                 renderizarGrilla(datos.records);
             } catch (error) {
                 console.error(error);
-                grid.innerHTML = '<h3 style="grid-column: 1/-1; text-align: center; color: red;">❌ Error al cargar la base de datos. Revisá tu Token o Base ID.</h3>';
+                grid.innerHTML = '<h3 class="col-span-full text-center text-red-500 font-semibold py-12">❌ Error al cargar la base de datos. Revisá tu Token o Base ID.</h3>';
             }
         }
 
-// 3. FUNCIÓN PARA DIBUJAR LAS TARJETAS HTML ACTUALIZADA
+        // 3. FUNCIÓN PARA DIBUJAR LAS TARJETAS HTML ACTUALIZADA
         function renderizarGrilla(productos) {
             const grid = document.querySelector('.products-grid');
             grid.innerHTML = ''; // Limpiamos la grilla
             
             // Actualizamos el contador de resultados
-            document.querySelector('.results-count').innerText = `Mostrando ${productos.length} productos encontrados`;
+            document.querySelectorAll('.results-count').forEach(el => {
+                el.innerText = `Mostrando ${productos.length} productos encontrados`;
+            });
 
             productos.forEach(producto => {
                 const campos = producto.fields;
@@ -434,7 +466,7 @@
                 const lineal = campos['Lineal'] || 'General';
                 const linkFtp = campos['Link FTP General'] || '#';
                 
-                // NUEVO: Buscamos la foto de portada
+                // Buscamos la foto de portada
                 const fotoPortada = campos['Foto Portada URL'];
                 
                 const colorMarca = brandConfig[marca] ? brandConfig[marca].primary : '#64748b';
@@ -442,29 +474,33 @@
                 // Lógica de imagen: Si hay URL, muestra la foto. Si no, muestra la letra grande.
                 let imgHTML = '';
                 if (fotoPortada) {
-                    imgHTML = `<img src="${fotoPortada}" alt="${nombre}" class="product-img">`;
+                    imgHTML = `<img src="${fotoPortada}" alt="${nombre}" class="product-img max-h-36 max-w-full object-contain mix-blend-multiply">`;
                 } else {
-                    imgHTML = `<div style="font-size: 3rem; color: #cbd5e1; font-weight: bold;">${marca.charAt(0)}</div>`;
+                    imgHTML = `<div class="text-4xl text-slate-300 font-bold">${marca.charAt(0)}</div>`;
                 }
 
-                // Construimos el HTML
+                // Construimos el HTML con estética idéntica a la del Inicio
                 const cardHTML = `
-                    <div class="product-card">
+                    <div class="product-card bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between p-4 group">
                         <div>
-                            <div class="product-img-wrap">
+                            <div class="flex items-center gap-1.5 mb-3 flex-wrap">
+                                <span class="card-badge-brand px-2.5 py-0.5 rounded-full text-[11px] font-bold text-white shadow-xs" style="background-color: ${colorMarca};">${marca}</span>
+                                <span class="card-badge-lineal px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200/60">${lineal}</span>
+                            </div>
+                            <div class="product-img-wrap w-full h-44 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-4 group-hover:bg-slate-100/80 transition-colors">
                                 ${imgHTML}
                             </div>
-                            <div class="badges-wrapper">
-                                <span class="card-badge-brand" style="background: ${colorMarca};">${marca}</span>
-                                <span class="card-badge-lineal">${lineal}</span>
-                            </div>
-                            <div class="product-sku">SKU: ${sku}</div>
-                            <div class="product-name">${nombre}</div>
+                            <div class="product-sku text-xs font-semibold text-brand-600 mb-1">SKU: ${sku}</div>
+                            <h4 class="product-name font-bold text-slate-900 text-sm leading-snug line-clamp-2 mb-4 group-hover:text-brand-600 transition-colors">${nombre}</h4>
                         </div>
-                        <div class="card-actions">
-                            <a href="producto.html?sku=${sku}" class="card-btn card-btn-primary">Ver Ficha Completa</a>
-                            <a href="${linkFtp}" target="_blank" class="card-btn card-btn-secondary">📁 FTP</a>
-                            <a href="https://argentrade.net/consultar_stock/?sku=${sku}" target="_blank" class="card-btn card-btn-secondary">📦 Stock</a>
+                        <div class="card-actions space-y-2 pt-2 border-t border-slate-100">
+                            <a href="producto.html?sku=${sku}" class="card-btn card-btn-primary w-full py-2 px-3 rounded-lg bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm">
+                                <span>Ver Ficha Completa</span>
+                            </a>
+                            <div class="grid grid-cols-2 gap-2">
+                                <a href="${linkFtp}" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">📁 FTP</a>
+                                <a href="https://argentrade.net/consultar_stock/?sku=${sku}" target="_blank" class="card-btn card-btn-secondary py-1.5 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-[11px] text-center transition-colors">📦 Stock</a>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -473,21 +509,26 @@
             });
         }
 
-        // Lógica de cambio visual de marcas (la que ya teníamos)
+        // Lógica de cambio visual de marcas dinámico
         function changeBrand(brandName, element) {
-            const config = brandConfig[brandName] || brandConfig['Todas'];
-            document.documentElement.style.setProperty('--primary', config.primary);
-            document.documentElement.style.setProperty('--accent', config.accent);
-            
             const pageTitle = document.getElementById('pageTitle');
-            pageTitle.innerText = brandName === 'Todas' ? "Catálogo General de Productos" : `Catálogo Oficial ${brandName}`;
+            if (pageTitle) {
+                pageTitle.innerText = brandName === 'Todas' ? "Catálogo General de Productos" : `Catálogo Oficial ${brandName}`;
+            }
 
-            document.querySelectorAll('.brand-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('moreDropdownBtn').classList.remove('active');
+            const headerBadge = document.getElementById('headerBrandBadge');
+            if (headerBadge) {
+                headerBadge.innerText = brandName === 'Todas' ? "Argentrade PIM" : `Marca: ${brandName}`;
+            }
+
+            document.querySelectorAll('.brand-filters .filter-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+                btn.classList.add('bg-slate-800/80', 'text-slate-300', 'hover:bg-slate-700', 'hover:text-white', 'border', 'border-slate-700/60');
+            });
 
             if (element) {
-                if (element.tagName === 'A') document.getElementById('moreDropdownBtn').classList.add('active');
-                else element.classList.add('active');
+                element.classList.remove('bg-slate-800/80', 'text-slate-300', 'hover:bg-slate-700', 'hover:text-white', 'border', 'border-slate-700/60');
+                element.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
             }
         }
 
