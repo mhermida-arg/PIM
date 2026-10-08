@@ -4,195 +4,489 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PIM Argentrade - Ficha de Producto</title>
-    <style>
-        /* (Mismos estilos que ya teníamos) */
-        :root {
-            --primary: #0f172a; --accent: #2563eb; --accent-bg: #eff6ff;
-            --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0;
-            --text: #0f172a; --text-muted: #64748b; --success: #16a34a;
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            800: '#5B5F66',
+                            900: '#141414',
+                            950: '#151517',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
-        header { background-color: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .logo { font-size: 1.25rem; font-weight: bold; text-decoration: none; color: white; }
-        .search-box { display: flex; gap: 0.5rem; width: 100%; max-width: 350px; }
-        .search-box input { width: 100%; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border); outline: none; }
-        .container { max-width: 1250px; margin: 1.5rem auto 2rem auto; padding: 0 1rem; }
-        .breadcrumb { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .breadcrumb a { color: var(--text-muted); text-decoration: none; font-weight: 500; }
-        .breadcrumb a:hover { color: var(--accent); text-decoration: underline; }
-        .breadcrumb-current { font-weight: bold; color: var(--text); }
-        .product-grid { display: grid; grid-template-columns: 320px 1fr; gap: 2rem; }
-        @media (max-width: 900px) { .product-grid { grid-template-columns: 1fr; } }
-        .sidebar-card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; height: fit-content; }
-        .main-img { width: 100%; height: 280px; object-fit: contain; background: #fff; border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; }
-        .meta-group { display: flex; flex-direction: column; gap: 0.4rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
-        .badge { display: inline-block; background: var(--accent-bg); color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 700; width: fit-content; border: 1px solid var(--accent); text-decoration: none; }
-        .sku-tag { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-        .variants-section { border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
-        .variants-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 0.5rem; }
-        .variant-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-        .variant-chip { background: #f1f5f9; border: 1px solid var(--border); padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
-        .variant-chip:hover { border-color: var(--accent); background: #e2e8f0; }
-        .variant-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
-        .color-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,0.2); }
-        .btn-action { display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 0.75rem; border-radius: 6px; font-weight: 600; text-decoration: none; font-size: 0.875rem; transition: background 0.2s; }
-        .btn-ftp { background: #0284c7; color: white; } .btn-ftp:hover { background: #0369a1; }
-        .btn-web { background: #f1f5f9; color: var(--text); border: 1px solid var(--border); } .btn-web:hover { background: #e2e8f0; }
-        .btn-stock { background: #16a34a; color: white; } .btn-stock:hover { background: #15803d; }
-        .main-content { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 1.5rem; }
-        .product-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; }
-        .tabs { display: flex; border-bottom: 2px solid var(--border); gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; }
-        .tab-btn { background: none; border: none; padding: 0.75rem; font-size: 0.875rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; white-space: nowrap; }
-        .tab-btn.active, .tab-btn:hover { color: var(--accent); border-bottom-color: var(--accent); }
-        .tab-panel { display: none; } .tab-panel.active { display: block; }
-        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .spec-item { background: #f8fafc; padding: 0.85rem; border-radius: 6px; border: 1px solid var(--border); }
-        .spec-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 0.25rem; }
-        .spec-value { font-size: 0.95rem; font-weight: 600; }
-        .copy-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 1rem; margin-bottom: 1rem; }
-        .copy-title { font-size: 0.85rem; font-weight: bold; color: var(--accent); margin-bottom: 0.5rem; text-transform: uppercase; }
-        .copy-text { font-size: 0.9rem; line-height: 1.5; white-space: pre-line; color: #334155; }
-        .resource-list { display: flex; flex-direction: column; gap: 0.75rem; }
-        .resource-item { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; text-decoration: none; color: var(--text); }
-        .resource-item:hover { border-color: var(--accent); }
-        .resource-tag { font-size: 0.75rem; background: #e2e8f0; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .hero-grid-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1.2px, transparent 1.2px);
+            background-size: 24px 24px;
+        }
+
+        .tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+            background-color: #eff6ff;
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-brand-500 selection:text-white">
 
-    <header id="mainHeader">
-        <a href="index.html" class="logo">Argentrade PIM</a>
-        <form action="catalogo.html" method="GET" class="search-box">
-            <input type="text" name="q" placeholder="Buscar por SKU o Nombre...">
-        </form>
+    <!-- 1. BARRA SUPERIOR / HEADER -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-4 lg:px-8 py-3 transition-all">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Logo Izquierda -->
+            <a href="index.html" class="flex items-center gap-2.5 group">
+                <div class="w-12 h-10 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white font-bold text-lg shadow-sm shadow-brand-500/30 group-hover:scale-105 transition-transform">
+                    PIM
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-extrabold text-slate-900 tracking-tight text-lg leading-tight group-hover:text-brand-600 transition-colors">Argentrade</span>
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 -mt-0.5">PIM System</span>
+                </div>
+            </a>
+
+            <!-- Tabs / Píldoras Centrales -->
+            <nav class="hidden md:flex items-center p-1 bg-slate-100 rounded-full border border-slate-200/60 text-sm font-medium">
+                <a href="index.html" class="flex items-center gap-2 px-5 py-1.5 rounded-full text-slate-600 hover:text-slate-900 transition-colors">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 00-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 00-1 1m-6 0h6"></path></svg>
+                    <span>Inicio</span>
+                </a>
+                <a href="catalogo.html" class="flex items-center gap-2 px-5 py-1.5 rounded-full bg-white text-slate-900 shadow-sm transition-all">
+                    <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span>Productos</span>
+                </a>
+            </nav>
+
+            <!-- Acciones Derecha -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <button title="Notificaciones" class="relative p-2.5 rounded-full text-slate-600 hover:bg-slate-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-brand-600 rounded-full ring-2 ring-white"></span>
+                </button>
+
+                <a href="#guardados" title="Guardados" class="flex items-center gap-1.5 p-2 sm:px-3 sm:py-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors text-sm font-medium">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                </a>
+
+                <div class="h-6 w-[1px] bg-slate-200 mx-1"></div>
+
+                <div class="flex items-center gap-2.5 pl-1 cursor-pointer group">
+                    <div class="w-9 h-9 rounded-full bg-slate-900 text-white font-semibold text-xs flex items-center justify-center ring-2 ring-slate-200 group-hover:ring-brand-500 transition-all">
+                        MH
+                    </div>
+                    <div class="hidden lg:flex flex-col text-left">
+                        <span class="text-xs font-bold text-slate-800 leading-snug">Martina H.</span>
+                        <span class="text-[10px] text-slate-500">Administrador</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </header>
 
-    <div class="container" id="appContainer">
-        <h3 style="text-align: center; color: #64748b; padding: 3rem;">Cargando ficha del producto... ⏳</h3>
-    </div>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 w-full flex-grow" id="appContainer">
+        <!-- ESTADO DE CARGA INITIAL -->
+        <div class="flex flex-col items-center justify-center py-20 space-y-4">
+            <div class="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-slate-500 text-sm font-semibold">Cargando ficha del producto...</p>
+        </div>
+    </main>
 
-    <!-- PLANTILLA OCULTA QUE SE LLENARÁ CON JS -->
+    <!-- PLANTILLA DINÁMICA DE PRODUCTO -->
     <template id="productoTemplate">
-        <nav class="breadcrumb">
-            <a href="index.html">Inicio</a> / 
-            <a href="catalogo.html">Catálogo</a> / 
-            <a href="#" id="bcMarca">Marca</a> / 
-            <span class="breadcrumb-current" id="bcActual">Cargando...</span>
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-xs font-medium text-slate-500 mb-6 flex-wrap">
+            <a href="index.html" class="hover:text-brand-600 transition-colors">Inicio</a>
+            <span>/</span>
+            <a href="catalogo.html" class="hover:text-brand-600 transition-colors">Catálogo</a>
+            <span>/</span>
+            <a href="#" id="bcMarca" class="hover:text-brand-600 transition-colors font-semibold text-slate-700">Marca</a>
+            <span>/</span>
+            <span class="text-slate-900 font-bold truncate max-w-xs sm:max-w-md" id="bcActual">Cargando...</span>
         </nav>
 
-        <div class="product-grid">
-            <!-- Columna Izquierda -->
-            <div class="sidebar-card">
-                <img id="mainProductImg" src="" alt="Producto" class="main-img">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- COLUMNA IZQUIERDA: SIDEBAR / FOTO & VARIANTES -->
+            <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm space-y-6">
                 
-                <div class="meta-group">
-                    <a href="#" class="badge" id="uiMarcaBadge">Marca</a>
-                    <span class="sku-tag">SKU Padre: <strong id="uiSkuPadre">...</strong></span>
-                    <span class="sku-tag">Variante: <strong id="uiSkuVariante">Seleccioná un color</strong></span>
-                    <span class="sku-tag" style="color: var(--success); font-weight: bold;" id="uiEstado">Activo</span>
+                <!-- Imagen Principal -->
+                <div class="w-full h-72 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center p-4 relative overflow-hidden group">
+                    <img id="mainProductImg" src="" alt="Producto" class="max-h-64 max-w-full object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105">
                 </div>
 
-                <div class="variants-section">
-                    <div class="variants-title">Variantes de Color:</div>
-                    <div class="variant-chips" id="uiVariantesContainer">
-                        <!-- Las variantes se cargan por JS -->
+                <!-- Meta Info / Badges -->
+                <div class="space-y-2.5 pb-4 border-b border-slate-100">
+                    <div class="flex items-center justify-between">
+                        <a href="#" id="uiMarcaBadge" class="px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-800 hover:bg-brand-50 hover:text-brand-600 transition-colors">Marca</a>
+                        <span id="uiEstado" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200/60">Activo</span>
+                    </div>
+
+                    <div class="text-xs text-slate-600 space-y-1 pt-1">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">SKU Padre:</span>
+                            <strong id="uiSkuPadre" class="text-slate-800 font-semibold">...</strong>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400 font-medium">SKU Variante:</span>
+                            <strong id="uiSkuVariante" class="text-brand-600 font-semibold">Seleccioná un color</strong>
+                        </div>
                     </div>
                 </div>
 
-                <a id="btnFtp" href="#" target="_blank" class="btn-action btn-ftp">📁 Carpeta FTP Completa</a>
-                <a id="btnWeb" href="#" target="_blank" class="btn-action btn-web">🔗 Web Oficial</a>
-                <a id="btnStock" href="#" target="_blank" class="btn-action btn-stock">📦 Chequear Stock</a>
+                <!-- Variantes de Color -->
+                <div class="space-y-3 pb-4 border-b border-slate-100">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Variantes de Color</h4>
+                    <div class="flex flex-wrap gap-2" id="uiVariantesContainer">
+                        <!-- Carga dinámica vía JS -->
+                    </div>
+                </div>
+
+                <!-- Acciones Rápidas -->
+                <div class="space-y-2">
+                    <a id="btnFtp" href="#" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs flex items-center justify-center gap-2 transition-all shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+                        <span>Carpeta FTP Completa</span>
+                    </a>
+                    
+                    <a id="btnWeb" href="#" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs flex items-center justify-center gap-2 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        <span>Web Oficial</span>
+                    </a>
+
+                    <a id="btnStock" href="#" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs flex items-center justify-center gap-2 transition-all shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        <span>Chequear Stock</span>
+                    </a>
+                </div>
+
             </div>
 
-            <!-- Columna Derecha -->
-            <div class="main-content">
-                <h1 class="product-title" id="uiNombre">Nombre Comercial</h1>
+            <!-- COLUMNA DERECHA: PESTAÑAS Y CONTENIDO DETALLADO -->
+            <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200/90 p-6 shadow-sm">
+                
+                <!-- Título Comercial -->
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug mb-6" id="uiNombre">
+                    Nombre Comercial del Producto
+                </h1>
 
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="openTab(event, 'tab-especificaciones')">Ficha Técnica</button>
-                    <button class="tab-btn" onclick="openTab(event, 'tab-comercial')">Textos Comerciales</button>
-                    <button class="tab-btn" onclick="openTab(event, 'tab-multimedia')">Enlaces & Recursos</button>
+                <!-- BARRA DE PESTAÑAS (TAB NAV) -->
+                <nav class="flex items-center gap-1 border-b border-slate-200/80 mb-6 overflow-x-auto pb-px">
+                    <button class="tab-btn px-4 py-2.5 rounded-t-xl font-bold text-xs sm:text-sm text-slate-500 hover:text-brand-600 transition-all flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent active" onclick="openTab(event, 'tab-informacion')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Información</span>
+                    </button>
+
+                    <button class="tab-btn px-4 py-2.5 rounded-t-xl font-bold text-xs sm:text-sm text-slate-500 hover:text-brand-600 transition-all flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent" onclick="openTab(event, 'tab-catalogacion')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Catalogación</span>
+                    </button>
+
+                    <button class="tab-btn px-4 py-2.5 rounded-t-xl font-bold text-xs sm:text-sm text-slate-500 hover:text-brand-600 transition-all flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent" onclick="openTab(event, 'tab-fotos')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>Fotos</span>
+                    </button>
+
+                    <button class="tab-btn px-4 py-2.5 rounded-t-xl font-bold text-xs sm:text-sm text-slate-500 hover:text-brand-600 transition-all flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent" onclick="openTab(event, 'tab-archivos')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span>Archivos</span>
+                    </button>
+
+                    <button class="tab-btn px-4 py-2.5 rounded-t-xl font-bold text-xs sm:text-sm text-slate-500 hover:text-brand-600 transition-all flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent" onclick="openTab(event, 'tab-desarrollo')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        <span>Desarrollo</span>
+                    </button>
+                </nav>
+
+                <!-- PESTAÑA 1: INFORMACIÓN -->
+                <div id="tab-informacion" class="tab-panel space-y-6">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Datos Universales</h3>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Peso</span>
+                            <span class="text-sm font-bold text-slate-800 mt-0.5 block" id="uiPeso">-</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Dimensión Armado</span>
+                            <span class="text-sm font-bold text-slate-800 mt-0.5 block" id="uiDimArmado">-</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Dimensión Bulto</span>
+                            <span class="text-sm font-bold text-slate-800 mt-0.5 block" id="uiDimBulto">-</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Destacado 1</span>
+                            <span class="text-sm font-bold text-slate-800 mt-0.5 block" id="uiDestacado1">-</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Destacado 2</span>
+                            <span class="text-sm font-bold text-slate-800 mt-0.5 block" id="uiDestacado2">-</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400">Lineal</span>
+                            <span class="text-sm font-bold text-slate-800 mt-0.5 block" id="uiLineal">-</span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 pt-4">Especificaciones Extendidas</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="uiFichaExtendida">
+                        <!-- Clave:Valor cargados dinámicamente -->
+                    </div>
                 </div>
 
-                <!-- Pestaña 1: Ficha Técnica -->
-                <div id="tab-especificaciones" class="tab-panel active">
-                    <!-- Datos Destacados Universales -->
-                    <div class="specs-grid">
-                        <div class="spec-item"><div class="spec-label">Peso</div><div class="spec-value" id="uiPeso">-</div></div>
-                        <div class="spec-item"><div class="spec-label">Dimensión Armado</div><div class="spec-value" id="uiDimArmado">-</div></div>
-                        <div class="spec-item"><div class="spec-label">Dimensión Bulto</div><div class="spec-value" id="uiDimBulto">-</div></div>
-                        <div class="spec-item"><div class="spec-label">Destacado 1</div><div class="spec-value" id="uiDestacado1">-</div></div>
-                        <div class="spec-item"><div class="spec-label">Destacado 2</div><div class="spec-value" id="uiDestacado2">-</div></div>
-                        <div class="spec-item"><div class="spec-label">Lineal</div><div class="spec-value" id="uiLineal">-</div></div>
+                <!-- PESTAÑA 2: CATALOGACIÓN -->
+                <div id="tab-catalogacion" class="tab-panel hidden space-y-6">
+                    
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-600 flex items-center gap-2">
+                            <span>📌 Bullet Points (Puntos Clave)</span>
+                        </h4>
+                        <div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed font-medium" id="uiBullets">-</div>
                     </div>
-                    <!-- Ficha Extendida Parseada -->
-                    <h4 style="margin: 1.5rem 0 0.5rem 0; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Especificaciones Extendidas</h4>
-                    <div class="specs-grid" id="uiFichaExtendida">
-                        <!-- Se llena con JS separando los Clave:Valor -->
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-brand-600 flex items-center gap-2">
+                            <span>📝 Descripción Larga (Web / E-commerce)</span>
+                        </h4>
+                        <div class="text-xs text-slate-700 whitespace-pre-line leading-relaxed" id="uiDescLarga">-</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Códigos y Enlaces E-Commerce</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
+                                <span class="text-xs font-medium text-slate-500">SKU Padre:</span>
+                                <code class="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-800" id="catSkuPadre">-</code>
+                            </div>
+                            <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
+                                <span class="text-xs font-medium text-slate-500">SKU Variante:</span>
+                                <code class="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-brand-600" id="catSkuVariante">-</code>
+                            </div>
+                            <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
+                                <span class="text-xs font-medium text-slate-500">Código EAN:</span>
+                                <code class="text-xs font-bold bg-slate-100 px-2 py-1 rounded text-slate-800" id="catEan">-</code>
+                            </div>
+                            <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between">
+                                <span class="text-xs font-medium text-slate-500">Enlace Web Oficial:</span>
+                                <a href="#" id="catWebLink" target="_blank" class="text-xs font-bold text-brand-600 hover:underline flex items-center gap-1">
+                                    <span>Ir al sitio</span>
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- PESTAÑA 3: FOTOS -->
+                <div id="tab-fotos" class="tab-panel hidden space-y-6">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Galería de Fotos del Producto</h3>
+                        <a id="uiLinkFtpFotos" href="#" target="_blank" class="text-xs font-semibold text-brand-600 hover:underline flex items-center gap-1">
+                            <span>Ver carpeta completa en FTP</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="uiGalleryContainer">
+                        <!-- Las fotos se cargan por JS -->
                     </div>
                 </div>
 
-                <!-- Pestaña 2: Comercial -->
-                <div id="tab-comercial" class="tab-panel">
-                    <div class="copy-box">
-                        <div class="copy-title">Bullet Points (Puntos clave)</div>
-                        <div class="copy-text" id="uiBullets">-</div>
-                    </div>
-                    <div class="copy-box">
-                        <div class="copy-title">Descripción Larga (Web)</div>
-                        <div class="copy-text" id="uiDescLarga">-</div>
+                <!-- PESTAÑA 4: ARCHIVOS -->
+                <div id="tab-archivos" class="tab-panel hidden space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Recursos y Manuales de Descarga</h3>
+                    
+                    <div class="space-y-2.5">
+                        <a href="#" target="_blank" id="linkManualRow" class="hidden items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">PDF</div>
+                                <span class="text-xs font-bold text-slate-800 group-hover:text-brand-600 transition-colors">Manual de Usuario y Garantía</span>
+                            </div>
+                            <span class="text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-slate-200 text-slate-700">Descargar</span>
+                        </a>
+
+                        <a href="#" target="_blank" id="linkVideoArmadoRow" class="hidden items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center font-bold text-xs">YT</div>
+                                <span class="text-xs font-bold text-slate-800 group-hover:text-brand-600 transition-colors">Video de Armado / Tutorial</span>
+                            </div>
+                            <span class="text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-slate-200 text-slate-700">Ver Video</span>
+                        </a>
+
+                        <a href="#" target="_blank" id="linkLifestyleRow" class="hidden items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">DRIVE</div>
+                                <span class="text-xs font-bold text-slate-800 group-hover:text-brand-600 transition-colors">Fotos Lifestyle / Ambientadas</span>
+                            </div>
+                            <span class="text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-slate-200 text-slate-700">Abrir Drive</span>
+                        </a>
+
+                        <a href="#" target="_blank" id="linkFtpRow" class="hidden items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl transition-all group">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs">FTP</div>
+                                <span class="text-xs font-bold text-slate-800 group-hover:text-brand-600 transition-colors">Carpeta de Recursos FTP Oficial</span>
+                            </div>
+                            <span class="text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-slate-200 text-slate-700">Explorar FTP</span>
+                        </a>
                     </div>
                 </div>
 
-                <!-- Pestaña 3: Multimedia -->
-                <div id="tab-multimedia" class="tab-panel">
-                    <div class="resource-list">
-                        <a href="#" target="_blank" class="resource-item" id="linkFtpRow" style="display:none;">
-                            <span>📷 Fotos Fondo Blanco (Carpeta FTP Oficial)</span><span class="resource-tag">FTP</span>
-                        </a>
-                        <a href="#" target="_blank" class="resource-item" id="linkLifestyleRow" style="display:none;">
-                            <span>🖼️ Fotos Lifestyle / Ambientadas</span><span class="resource-tag">DRIVE</span>
-                        </a>
-                        <a href="#" target="_blank" class="resource-item" id="linkManualRow" style="display:none;">
-                            <span>📄 Manual de Usuario y Garantía en PDF</span><span class="resource-tag">PDF</span>
-                        </a>
-                        <a href="#" target="_blank" class="resource-item" id="linkVideoArmadoRow" style="display:none;">
-                            <span>🎬 Video de Armado / Tutorial</span><span class="resource-tag">YOUTUBE</span>
-                        </a>
+                <!-- PESTAÑA 5: DESARROLLO -->
+                <div id="tab-desarrollo" class="tab-panel hidden space-y-6">
+                    
+                    <!-- Barra Superior de Porcentaje de Avance -->
+                    <div class="p-5 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl text-white space-y-3 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[11px] uppercase tracking-wider font-bold text-slate-400 block">Avance de Producto</span>
+                                <h4 class="text-lg font-bold text-white">Estado del Proceso de Desarrollo</h4>
+                            </div>
+                            <span class="text-2xl font-black text-brand-500" id="uiDesarrolloPct">0%</span>
+                        </div>
+
+                        <!-- Track de la barra de progreso -->
+                        <div class="w-full bg-slate-700/60 rounded-full h-3 overflow-hidden p-0.5 border border-slate-600/50">
+                            <div id="uiDesarrolloBar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-full rounded-full transition-all duration-700" style="width: 0%;"></div>
+                        </div>
                     </div>
+
+                    <!-- Pipeline / Estados por Etapa -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Etapas del Proceso</h4>
+
+                        <div class="grid grid-cols-1 gap-2.5">
+                            
+                            <!-- Etapa 1 -->
+                            <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs" id="stepIcon1">✓</div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-800">1. Alta y Datos Básicos</h5>
+                                        <p class="text-[11px] text-slate-500">SKU Padre, Marca, Lineal y Nombre Comercial</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800" id="stepBadge1">Completado</span>
+                            </div>
+
+                            <!-- Etapa 2 -->
+                            <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs" id="stepIcon2">✓</div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-800">2. Ficha Técnica y Medidas</h5>
+                                        <p class="text-[11px] text-slate-500">Pesos, dimensiones de armado/bulto y ficha extendida</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800" id="stepBadge2">Completado</span>
+                            </div>
+
+                            <!-- Etapa 3 -->
+                            <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs" id="stepIcon3">3</div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-800">3. Material Multimedia y Fotografía</h5>
+                                        <p class="text-[11px] text-slate-500">Fotos de producto en blanco, lifestyle y galería</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700" id="stepBadge3">En proceso</span>
+                            </div>
+
+                            <!-- Etapa 4 -->
+                            <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs" id="stepIcon4">4</div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-800">4. Manuales y Tutoriales</h5>
+                                        <p class="text-[11px] text-slate-500">Manual PDF de usuario y video instructivo de armado</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700" id="stepBadge4">Pendiente</span>
+                            </div>
+
+                            <!-- Etapa 5 -->
+                            <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs" id="stepIcon5">5</div>
+                                    <div>
+                                        <h5 class="text-xs font-bold text-slate-800">5. Catalogación y Publicación Web</h5>
+                                        <p class="text-[11px] text-slate-500">Bullets comerciales, descripción extendida y link oficial</p>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700" id="stepBadge5">Pendiente</span>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
+
         </div>
     </template>
 
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200/80 mt-16 py-8 px-4 lg:px-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-700">PIM Argentrade</span>
+                <span>• Base Unificada de Productos</span>
+            </div>
+            <p>© 2026 Argentrade S.A. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT Y CONEXIÓN CON AIRTABLE -->
     <script>
-        // 1. TUS CREDENCIALES DE AIRTABLE (Pegalas de nuevo acá)
+        const AIRTABLE_TOKEN = "patsRhUUmBYhyRU6v.fc25941b8835fac901831978042e8ecb21c32a4a2cd68c20eef1ddc42a3478f3";
+        const AIRTABLE_BASE_ID = "app7o9ehVEoXUVmQo";
 
-        const AIRTABLE_TOKEN = "patsRhUUmBYhyRU6v.fc25941b8835fac901831978042e8ecb21c32a4a2cd68c20eef1ddc42a3478f3"; // Empieza con pat...
-        const AIRTABLE_BASE_ID = "app7o9ehVEoXUVmQo"; // Empieza con app...
-
-
-        const brandConfig = {
-            'Todas': { primary: '#0f172a', accent: '#2563eb' },
-            'Bebesit': { primary: '#ef4444', accent: '#ef4444' },
-            'Randers': { primary: '#991b1b', accent: '#991b1b' },
-            'Adidas': { primary: '#000000', accent: '#000000' },
-            'Jeico': { primary: '#ea580c', accent: '#ea580c' },
-            'Athletic': { primary: '#f97316', accent: '#f97316' }
-        };
-
-        // Extraer el SKU de la URL (ej: producto.html?sku=1390)
         const urlParams = new URLSearchParams(window.location.search);
         const skuPadreURL = urlParams.get('sku');
 
         async function cargarFicha() {
             if (!skuPadreURL) {
-                document.getElementById('appContainer').innerHTML = "<h2 style='text-align:center; padding:3rem;'>No se especificó un producto en la URL.</h2>";
+                document.getElementById('appContainer').innerHTML = `
+                    <div class="max-w-md mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 text-center shadow-sm">
+                        <div class="text-3xl mb-3">⚠️</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Producto no especificado</h3>
+                        <p class="text-xs text-slate-500 mb-6">No se indicó ningún SKU en la URL de navegación.</p>
+                        <a href="index.html" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs rounded-xl transition-all">Volver al inicio</a>
+                    </div>`;
                 return;
             }
 
-            // Buscar en la tabla Productos Padre
             const formula = encodeURIComponent(`{SKU Padre} = '${skuPadreURL}'`);
             const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Productos%20Padre?filterByFormula=${formula}`;
 
@@ -203,51 +497,58 @@
                 if (data.records && data.records.length > 0) {
                     const producto = data.records[0].fields;
                     renderizarProducto(producto);
-                    
-                    // Si tiene variantes cargadas, las buscamos en la tabla Variantes
+
                     const idsVariantes = producto['Variantes'] || [];
                     if(idsVariantes.length > 0) {
                         buscarVariantes(idsVariantes);
                     } else {
-                        document.getElementById('uiVariantesContainer').innerHTML = "<span style='font-size:0.8rem; color:#64748b;'>Producto único (sin variantes de color)</span>";
+                        document.getElementById('uiVariantesContainer').innerHTML = "<span class='text-xs text-slate-400'>Producto único (sin variantes de color)</span>";
                     }
                 } else {
-                    document.getElementById('appContainer').innerHTML = "<h2 style='text-align:center; padding:3rem;'>❌ Producto no encontrado en la Base de Datos.</h2>";
+                    document.getElementById('appContainer').innerHTML = `
+                        <div class="max-w-md mx-auto my-12 p-8 bg-white rounded-2xl border border-slate-200 text-center shadow-sm">
+                            <div class="text-3xl mb-3">❌</div>
+                            <h3 class="text-lg font-bold text-slate-900 mb-2">Producto no encontrado</h3>
+                            <p class="text-xs text-slate-500 mb-6">El SKU <strong>"${skuPadreURL}"</strong> no existe en la base de datos.</p>
+                            <a href="index.html" class="inline-flex items-center px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-medium text-xs rounded-xl transition-all">Volver al inicio</a>
+                        </div>`;
                 }
             } catch(e) {
-                console.error(e);
+                console.error("Error al obtener producto de Airtable:", e);
             }
         }
 
         function renderizarProducto(campos) {
-            // Instanciar la plantilla HTML
             const template = document.getElementById('productoTemplate');
-            document.getElementById('appContainer').innerHTML = '';
-            document.getElementById('appContainer').appendChild(template.content.cloneNode(true));
+            const appContainer = document.getElementById('appContainer');
+            appContainer.innerHTML = '';
+            appContainer.appendChild(template.content.cloneNode(true));
 
-            // Variables clave
             const nombre = campos['Nombre Comercial'] || 'Sin nombre';
             const marca = campos['Marca'] || 'Todas';
             const fotoPortada = campos['Foto Portada URL'] || '';
 
-            // Colorizar el header según la marca
-            if(brandConfig[marca]) {
-                document.documentElement.style.setProperty('--primary', brandConfig[marca].primary);
-                document.documentElement.style.setProperty('--accent', brandConfig[marca].accent);
-            }
-
-            // Llenar Textos Principales
             document.getElementById('uiNombre').innerText = nombre;
             document.getElementById('bcActual').innerText = `${nombre} (${skuPadreURL})`;
             document.getElementById('bcMarca').innerText = marca;
             document.getElementById('bcMarca').href = `catalogo.html?marca=${marca}`;
-            
+
             document.getElementById('uiMarcaBadge').innerText = marca;
             document.getElementById('uiMarcaBadge').href = `catalogo.html?marca=${marca}`;
             document.getElementById('uiSkuPadre').innerText = skuPadreURL;
+            document.getElementById('catSkuPadre').innerText = skuPadreURL;
             document.getElementById('uiEstado').innerText = campos['Estado General'] || 'Activo';
-            
-            if(fotoPortada) document.getElementById('mainProductImg').src = fotoPortada;
+
+            if(fotoPortada) {
+                document.getElementById('mainProductImg').src = fotoPortada;
+                
+                // Cargar imagen en galería
+                const gallery = document.getElementById('uiGalleryContainer');
+                gallery.innerHTML = `
+                    <div class="h-36 rounded-xl bg-slate-50 border border-slate-200/80 p-2 flex items-center justify-center">
+                        <img src="${fotoPortada}" class="max-h-full max-w-full object-contain mix-blend-multiply">
+                    </div>`;
+            }
 
             // Datos Destacados
             document.getElementById('uiPeso').innerText = campos['Peso de producto'] || '-';
@@ -257,11 +558,11 @@
             document.getElementById('uiDestacado2').innerText = campos['Atributo Destacado 2'] || '-';
             document.getElementById('uiLineal').innerText = campos['Lineal'] || '-';
 
-            // Textos Comerciales
+            // Catalogación
             document.getElementById('uiBullets').innerText = campos['Bullet Points'] || 'Sin información comercial cargada.';
             document.getElementById('uiDescLarga').innerText = campos['Descripcion Larga'] || 'Sin descripción extendida cargada.';
 
-            // Mapeo automático de "Ficha técnica extendida" a Grilla
+            // Especificaciones Extendidas
             const textoFicha = campos['Ficha tecnica extendida'] || '';
             const contenedorFicha = document.getElementById('uiFichaExtendida');
             if (textoFicha) {
@@ -270,44 +571,54 @@
                 lineas.forEach(linea => {
                     if(linea.includes(':')) {
                         const partes = linea.split(':');
-                        htmlFicha += `<div class="spec-item"><div class="spec-label">${partes[0].trim()}</div><div class="spec-value">${partes[1].trim()}</div></div>`;
+                        htmlFicha += `
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                                <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">${partes[0].trim()}</span>
+                                <span class="text-xs font-semibold text-slate-800 mt-0.5 block">${partes[1].trim()}</span>
+                            </div>`;
                     }
                 });
                 contenedorFicha.innerHTML = htmlFicha;
             } else {
-                contenedorFicha.innerHTML = '<div style="grid-column: 1/-1; color: #64748b; font-size: 0.9rem;">No hay especificaciones detalladas disponibles.</div>';
+                contenedorFicha.innerHTML = '<div class="col-span-full text-xs text-slate-400">No hay especificaciones extendidas registradas.</div>';
             }
 
-            // Enlaces y Botones
+            // Configurar Enlaces
             configurarLink('btnFtp', campos['Link FTP General']);
             configurarLink('linkFtpRow', campos['Link FTP General'], true);
-            
+            configurarLink('uiLinkFtpFotos', campos['Link FTP General']);
+
             configurarLink('btnWeb', campos['URL Web Oficial']);
-            
+            if(campos['URL Web Oficial']) {
+                document.getElementById('catWebLink').href = campos['URL Web Oficial'];
+            }
+
             configurarLink('linkLifestyleRow', campos['Link Fotos Lifestyle'], true);
             configurarLink('linkManualRow', campos['Manual de Usuario'], true);
             configurarLink('linkVideoArmadoRow', campos['Link Videos Armado'], true);
 
-            // Botón de Stock default al padre
             document.getElementById('btnStock').href = `https://argentrade.net/consultar_stock/?sku=${skuPadreURL}`;
+
+            // Cálculo y Render de Porcentaje de Desarrollo
+            calcularDesarrollo(campos);
         }
 
         function configurarLink(idElemento, url, isRow = false) {
             const el = document.getElementById(idElemento);
+            if (!el) return;
+
             if (url) {
                 el.href = url;
-                if(isRow) el.style.display = 'flex';
-            } else {
-                if(!isRow) {
-                    el.style.opacity = '0.5';
-                    el.style.pointerEvents = 'none';
-                    el.innerText = '🚫 No disponible';
+                if(isRow) {
+                    el.classList.remove('hidden');
+                    el.classList.add('flex');
                 }
+            } else if (!isRow) {
+                el.classList.add('opacity-50', 'pointer-events-none');
             }
         }
 
         async function buscarVariantes(idsVariantes) {
-            // Airtable permite filtrar por IDs directamente usando RECORD_ID()
             const formulas = idsVariantes.map(id => `RECORD_ID()='${id}'`);
             const formulaFinal = encodeURIComponent(`OR(${formulas.join(',')})`);
             const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Variantes?filterByFormula=${formulaFinal}`;
@@ -317,62 +628,98 @@
                 const data = await res.json();
                 
                 const container = document.getElementById('uiVariantesContainer');
-                container.innerHTML = ''; // Limpiar cargando
+                container.innerHTML = '';
 
                 data.records.forEach((variante, index) => {
                     const c = variante.fields;
                     const skuVar = c['SKU Variante'] || 'N/A';
                     const colorNom = c['Color / Denominación'] || 'Color';
-                    const colorHex = c['Código Color Hex'] || '#cccccc';
+                    const colorHex = c['Código Color Hex'] || '#cbd5e1';
                     const fotoUrl = c['Foto Principal URL'] || '';
-                    const activaClass = (index === 0) ? 'active' : ''; // Por defecto la primera es activa
+                    const eanCode = c['EAN'] || '-';
 
-                    // Si es la primera, cargamos su foto e info inicial
                     if(index === 0) {
-                        seleccionarVarianteVisual(skuVar, fotoUrl, this);
+                        seleccionarVarianteVisual(skuVar, fotoUrl, eanCode);
                     }
 
                     const chip = document.createElement('button');
-                    chip.className = `variant-chip ${activaClass}`;
-                    chip.innerHTML = `<span class="color-dot" style="background: ${colorHex};"></span> ${skuVar} (${colorNom})`;
+                    chip.className = `px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-2 transition-all ${index === 0 ? 'border-brand-500 bg-brand-50 text-brand-700' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'}`;
+                    chip.innerHTML = `<span class="w-2.5 h-2.5 rounded-full border border-black/10 shadow-sm" style="background: ${colorHex};"></span> <span>${skuVar}</span>`;
                     
-                    // Evento onclick
                     chip.onclick = function() {
-                        // Desmarcar todas
-                        document.querySelectorAll('.variant-chip').forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        seleccionarVarianteVisual(skuVar, fotoUrl);
+                        document.querySelectorAll('#uiVariantesContainer button').forEach(btn => {
+                            btn.className = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-2 transition-all border-slate-200 bg-white text-slate-700 hover:border-slate-300';
+                        });
+                        this.className = 'px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-2 transition-all border-brand-500 bg-brand-50 text-brand-700';
+                        seleccionarVarianteVisual(skuVar, fotoUrl, eanCode);
                     };
 
                     container.appendChild(chip);
                 });
 
             } catch(e) {
-                console.error("Error cargando variantes", e);
+                console.error("Error al buscar variantes:", e);
             }
         }
 
-        function seleccionarVarianteVisual(skuVar, fotoUrl) {
+        function seleccionarVarianteVisual(skuVar, fotoUrl, eanCode = '-') {
             document.getElementById('uiSkuVariante').innerText = skuVar;
+            document.getElementById('catSkuVariante').innerText = skuVar;
+            document.getElementById('catEan').innerText = eanCode;
             document.getElementById('btnStock').href = `https://argentrade.net/consultar_stock/?sku=${skuVar}`;
-            document.getElementById('btnStock').innerText = `📦 Chequear Stock de ${skuVar}`;
             
-            // Cambiar imagen principal si la variante tiene una propia
-            const imgEl = document.getElementById('mainProductImg');
             if(fotoUrl) {
-                imgEl.src = fotoUrl;
+                document.getElementById('mainProductImg').src = fotoUrl;
             }
+        }
+
+        // Cálculo dinámico de % de desarrollo
+        function calcularDesarrollo(campos) {
+            let totalPuntos = 0;
+            let completados = 0;
+
+            const verificarEtapa = (condicion, stepIndex) => {
+                totalPuntos++;
+                const icon = document.getElementById(`stepIcon${stepIndex}`);
+                const badge = document.getElementById(`stepBadge${stepIndex}`);
+                
+                if (condicion) {
+                    completados++;
+                    if (icon) {
+                        icon.className = "w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs";
+                        icon.innerText = "✓";
+                    }
+                    if (badge) {
+                        badge.className = "text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800";
+                        badge.innerText = "Completado";
+                    }
+                } else if (badge) {
+                    badge.className = "text-[11px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700";
+                    badge.innerText = "Pendiente";
+                }
+            };
+
+            verificarEtapa(campos['SKU Padre'] && campos['Marca'], 1);
+            verificarEtapa(campos['Peso de producto'] || campos['Ficha tecnica extendida'], 2);
+            verificarEtapa(campos['Foto Portada URL'] || campos['Link FTP General'], 3);
+            verificarEtapa(campos['Manual de Usuario'] || campos['Link Videos Armado'], 4);
+            verificarEtapa(campos['Bullet Points'] && campos['URL Web Oficial'], 5);
+
+            const porcentaje = Math.round((completados / totalPuntos) * 100);
+            
+            document.getElementById('uiDesarrolloPct').innerText = `${porcentaje}%`;
+            document.getElementById('uiDesarrolloBar').style.width = `${porcentaje}%`;
         }
 
         // Lógica de Pestañas
         function openTab(evt, tabId) {
-            document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
             document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            document.getElementById(tabId).classList.add("active");
+            
+            document.getElementById(tabId).classList.remove("hidden");
             evt.currentTarget.classList.add("active");
         }
 
-        // Arrancar al cargar
         window.onload = cargarFicha;
     </script>
 </body>
